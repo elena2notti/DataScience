@@ -588,20 +588,15 @@ class MetadataQueryHandler(QueryHandler):
 
             # Gestione sia date singole che intervalli
             {{
-                # Caso 1: Date singole (es. "1757")
                 ?object schema:dateCreated ?dateStr .
                 FILTER (REGEX(?dateStr, "^{date}$"))
             }}
             UNION
             {{
-                # Caso 2: Intervalli (es. "1700-1799")
                 ?object schema:startDate ?start ;
                         schema:endDate ?end .
-                FILTER (
-                    xsd:integer(SUBSTR(STR(?start), 1, 4)) <= {date} &&
-                    xsd:integer(SUBSTR(STR(?end), 1, 4)) >= {date}
-                )
-                BIND(CONCAT(STR(?start), "-", STR(?end)) AS ?dateStr)
+                FILTER (?start <= {date} && ?end >= {date})
+                BIND(CONCAT(?start, "-", ?end) AS ?dateStr)
             }}
 
             OPTIONAL {{
