@@ -206,7 +206,7 @@ class MetadataUploadHandler(UploadHandler):  # chiara
                                 })
             venus.drop_duplicates(subset=["Id"], keep="first", inplace=True, ignore_index=True)
 
-            base_url = Namespace("http://github.com/HelloKittyDataClan/DSexam/")
+            base_url = Namespace("http://github.com/elena2notti/DataScience/")
             db = Namespace("https://dbpedia.org/property/")
             schema = Namespace("http://schema.org/")
 
@@ -352,7 +352,7 @@ class ProcessDataUploadHandler(UploadHandler):  #catalina
 
         df_activities = pd.DataFrame(table_data)
         
-        #if 'tool' in df_activities.columns:
+        #if 'tool' in df_activities.columns: # versione vecchia
             #df_activities['tool'] = df_activities['tool'].apply(lambda x: ', '.join(x) if isinstance(x, (list, set)) else x)
 
         if 'tool' in df_activities.columns:
@@ -431,7 +431,7 @@ class QueryHandler(Handler):
                 ?object <http://schema.org/identifier> ?id .
                 ?object <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> ?type .
                 ?object <http://schema.org/title> ?title .
-                ?object <http://github.com/HelloKittyDataClan/DSexam/owner> ?owner .
+                ?object <http://github.com/elena2notti/DataScience/owner> ?owner .
                 ?object <http://schema.org/itemLocation> ?place .
             
                 OPTIONAL {?object <http://schema.org/dateCreated> ?date .}
@@ -478,7 +478,7 @@ class MetadataQueryHandler(QueryHandler):
     def getAllCulturalHeritageObjects(self):        #beatrice
         query = """
         PREFIX schema: <http://schema.org/>
-        PREFIX base_url: <http://github.com/HelloKittyDataClan/DSexam/>
+        PREFIX base_url: <http://github.com/elena2notti/DataScience/>
         PREFIX db: <https://dbpedia.org/property/>
 
         SELECT DISTINCT ?object ?id ?type ?title ?date ?owner ?place ?author ?authorName ?authorID
@@ -533,7 +533,7 @@ class MetadataQueryHandler(QueryHandler):
     def getCulturalHeritageObjectsAuthoredBy(self, personId: str) -> pd.DataFrame:          #beatrice
         query = f"""    
         PREFIX schema: <http://schema.org/>
-        PREFIX base_url: <http://github.com/HelloKittyDataClan/DSexam/>
+        PREFIX base_url: <http://github.com/elena2notti/DataScience/>
         PREFIX db: <https://dbpedia.org/property/>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
 
@@ -573,7 +573,7 @@ class MetadataQueryHandler(QueryHandler):
     def getCulturalHeritageObjectsByDate(self, date: str) -> pd.DataFrame: #nuovo elena
         query = f"""
         PREFIX schema: <http://schema.org/>
-        PREFIX base_url: <http://github.com/HelloKittyDataClan/DSexam/>
+        PREFIX base_url: <http://github.com/elena2notti/DataScience/>
         PREFIX db: <https://dbpedia.org/property/>
         PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
         PREFIX foaf: <http://xmlns.com/foaf/0.1/>
@@ -628,40 +628,20 @@ class MetadataQueryHandler(QueryHandler):
         results = get(self.dbPathOrUrl, query, True)
         return results
 
-
 '''
-# Once all the classes are imported, first create the relational
-# database using the related source data
 rel_path = "relational.db"
 process = ProcessDataUploadHandler()
 process.setDbPathOrUrl(rel_path)
 process.pushDataToDb("data/process.json")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
-
-# Then, create the graph database (remember first to run the
-# Blazegraph instance) using the related source data
-grp_endpoint = "http://192.168.14.97:9999/blazegraph/sparql"
+grp_endpoint = "http://192.168.178.73:9999/blazegraph/sparql"
 metadata = MetadataUploadHandler()
 metadata.setDbPathOrUrl(grp_endpoint)
 metadata.pushDataToDb("data/meta.csv")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
-
-# In the next passage, create the query handlers for both
-# the databases, using the related classes
-
 metadata_qh = MetadataQueryHandler()
 metadata_qh.setDbPathOrUrl(grp_endpoint)
-
-# Call the method and store the result
 getCulturalHeritageObjectsByDate = metadata_qh.getCulturalHeritageObjectsByDate("1523")
-
-pd.set_option('display.max_rows', None)  # Show all rows
-pd.set_option('display.max_columns', None)  # Show all columns
-# Print the result
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 print("Result from getCulturalHeritageObjectsByDate:")
 print(getCulturalHeritageObjectsByDate)
 '''
@@ -826,81 +806,49 @@ class ProcessDataQueryHandler(QueryHandler): #elena
                 return df_union.fillna("")
             else:
                 return pd.DataFrame()
-'''
 
-# Once all the classes are imported, first create the relational
-# database using the related source data
+'''
 rel_path = "relational.db"
 process = ProcessDataUploadHandler()
 process.setDbPathOrUrl(rel_path)
 process.pushDataToDb("data/process.json")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
-
-# Then, create the graph database (remember first to run the
-# Blazegraph instance) using the related source data
-grp_endpoint = "http://192.168.14.43:9999/blazegraph/sparql"
+grp_endpoint = "http://192.168.178.73:9999/blazegraph/sparql"
 metadata = MetadataUploadHandler()
 metadata.setDbPathOrUrl(grp_endpoint)
 metadata.pushDataToDb("data/meta.csv")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
-
-# In the next passage, create the query handlers for both
-# the databases, using the related classes
 process_qh = ProcessDataQueryHandler()
 process_qh.setDbPathOrUrl(rel_path)
-
 metadata_qh = MetadataQueryHandler()
 metadata_qh.setDbPathOrUrl(grp_endpoint)
 
-# Call the method and store the result
-getActivitiesReferringToCulturalHeritageObject = process_qh.getActivitiesReferringToCulturalHeritageObject("7")
+getActivitiesReferringToCulturalHeritageObject = process_qh.getActivitiesReferringToCulturalHeritageObject("5")
 
-pd.set_option('display.max_rows', None)  # Show all rows
-pd.set_option('display.max_columns', None)  # Show all columns
-# Print the result
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 print("Result from getActivitiesReferringToCulturalHeritageObject:")
 print(getActivitiesReferringToCulturalHeritageObject)
 
 
 
-# Once all the classes are imported, first create the relational
-# database using the related source data
 rel_path = "relational.db"
 process = ProcessDataUploadHandler()
 process.setDbPathOrUrl(rel_path)
 process.pushDataToDb("data/process.json")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
-
-# Then, create the graph database (remember first to run the
-# Blazegraph instance) using the related source data
 grp_endpoint = "http://192.168.178.73:9999/blazegraph/sparql"
 metadata = MetadataUploadHandler()
 metadata.setDbPathOrUrl(grp_endpoint)
 metadata.pushDataToDb("data/meta.csv")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
 
-# In the next passage, create the query handlers for both
-# the databases, using the related classes
 process_qh = ProcessDataQueryHandler()
 process_qh.setDbPathOrUrl(rel_path)
 
 metadata_qh = MetadataQueryHandler()
 metadata_qh.setDbPathOrUrl(grp_endpoint)
 
-# Call the method and store the result
 getActivitiesStartedAfter = process_qh.getActivitiesStartedAfter("2023-05-08")
 
-pd.set_option('display.max_rows', None)  # Show all rows
-pd.set_option('display.max_columns', None)  # Show all columns
-# Print the result
+pd.set_option('display.max_rows', None)
+pd.set_option('display.max_columns', None)
 print("Result from getActivitiesStartedAfter:")
 print(getActivitiesStartedAfter)
 
@@ -950,7 +898,7 @@ class BasicMashup(object):
 
             authors = self.getAuthorsOfCulturalHeritageObject(id)
 
-            base_url = "http://github.com/HelloKittyDataClan/DSexam/"
+            base_url = "http://github.com/elena2notti/DataScience/"
 
             # Converte la data in stringa
             date_as_string = str(row["date"])  # Conversione esplicita a stringa
@@ -1613,47 +1561,30 @@ class AdvancedMashup(BasicMashup):
         return matching_activities
 
 
-
-# Once all the classes are imported, first create the relational
-# database using the related source data
+'''
 rel_path = "relational.db"
 process = ProcessDataUploadHandler()
 process.setDbPathOrUrl(rel_path)
 process.pushDataToDb("data/process.json")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
-
-# Then, create the graph database (remember first to run the
-# Blazegraph instance) using the related source data
 grp_endpoint = "http://192.168.178.73:9999/blazegraph/sparql"
 metadata = MetadataUploadHandler()
 metadata.setDbPathOrUrl(grp_endpoint)
 metadata.pushDataToDb("data/meta.csv")
-# Please remember that one could, in principle, push one or more files
-# calling the method one or more times (even calling the method twice
-# specifying the same file!)
-
-# In the next passage, create the query handlers for both
-# the databases, using the related classes
 process_qh = ProcessDataQueryHandler()
 process_qh.setDbPathOrUrl(rel_path)
-
 metadata_qh = MetadataQueryHandler()
 metadata_qh.setDbPathOrUrl(grp_endpoint)
-
-# Finally, create a advanced mashup object for asking
-# about data
 mashup = AdvancedMashup()
 mashup.addProcessHandler(process_qh)
 mashup.addMetadataHandler(metadata_qh)
-
 result_q1 = mashup.getAllActivities()
+result_q3 = mashup.getActivitiesByCulturalHeritageObject("20", "1900")
+pp(result_q3)
 
 
 # Test aggiuntivo
 print("\n=== Test avanzato: attività per oggetto 3 (1523) ===")
-activities = mashup.getActivitiesByCulturalHeritageObject("5", "1545")
+activities = mashup.getActivitiesByCulturalHeritageObject("20", "1900")
 if activities:
     for i, activity in enumerate(activities, 1):
         print(f"\nAttività #{i}:")
@@ -1663,9 +1594,7 @@ if activities:
 else:
     print("Nessuna attività trovata per l'oggetto 3 creato nel 1523")
 
-
-
-# Test strumenti multipli mantenuti correttamente (es. per oggetto 5)
+# Test strumenti multipli mantenuti correttamente
 print("\n=== Test strumenti multipli per attività ===")
 activities = mashup.getActivitiesByCulturalHeritageObject("3", "1523")
 
@@ -1675,12 +1604,10 @@ if activities:
         print(f"Fase: {type(activity).__name__}")
         print(f"Strumenti (raw): {activity.getTools()}")
         if isinstance(activity.getTools(), (set, list)):
-            print(f"✅ OK: strumenti sono {len(activity.getTools())} elementi strutturati")
+            print(f"OK: strumenti sono {len(activity.getTools())} elementi strutturati")
         else:
-            print("❌ ERRORE: strumenti non sono un set o lista strutturata")
+            print("ERRORE: strumenti non sono un set o lista strutturata")
 else:
     print("Nessuna attività trovata per l’oggetto 5 nel 2023")
 
-
-
-
+'''
