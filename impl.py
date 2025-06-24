@@ -1555,7 +1555,7 @@ class AdvancedMashup(BasicMashup):
         
         return matching_activities
 
-
+'''
 rel_path = "relational.db"
 process = ProcessDataUploadHandler()
 process.setDbPathOrUrl(rel_path)
@@ -1574,7 +1574,6 @@ mashup.addMetadataHandler(metadata_qh)
 result_q1 = mashup.getAllActivities()
 result_q3 = mashup.getActivitiesByCulturalHeritageObject("20", "1900")
 pp(result_q3)
-'''
 
 # Test aggiuntivo
 print("\n=== Test avanzato: attività per oggetto 3 (1523) ===")
