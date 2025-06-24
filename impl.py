@@ -300,6 +300,16 @@ class MetadataUploadHandler(UploadHandler):  # chiara
                             my_graph.add((related_person, name, Literal(author_name))) 
                             my_graph.add((related_person, id, Literal(author_id))) 
                             
+            store = SPARQLUpdateStore()
+            endpoint = self.getDbPathOrUrl()
+            
+            try:
+                store.open((endpoint, endpoint))
+                # CLEAR THE GRAPH BEFORE UPLOADING NEW DATA
+                store.update("DELETE WHERE { ?s ?p ?o }")
+            except Exception as e:
+                print(f"Store operation failed: {e}")
+                return False
 
             store = SPARQLUpdateStore()
             endpoint = self.getDbPathOrUrl()  # Modificato per rimuovere l'aggiunta di "/sparql"
@@ -1535,9 +1545,6 @@ class AdvancedMashup(BasicMashup):
     
     def getActivitiesByCulturalHeritageObject(self, id: str, date: str) -> list[Activity]: #nuovo elena
         my_object = self.getEntityById(id)
-        
-        if my_object is None:
-            return "No object id existing in the database"
 
         object_date = my_object.getDate()
         if '-' in object_date:
@@ -1560,7 +1567,7 @@ rel_path = "relational.db"
 process = ProcessDataUploadHandler()
 process.setDbPathOrUrl(rel_path)
 process.pushDataToDb("data/process.json")
-grp_endpoint = "http://192.168.1.111:9999/blazegraph/sparql"
+grp_endpoint = "http://192.168.178.73:9999/blazegraph/sparql"
 metadata = MetadataUploadHandler()
 metadata.setDbPathOrUrl(grp_endpoint)
 metadata.pushDataToDb("data/meta.csv")
@@ -1572,7 +1579,7 @@ mashup = AdvancedMashup()
 mashup.addProcessHandler(process_qh)
 mashup.addMetadataHandler(metadata_qh)
 result_q1 = mashup.getAllActivities()
-result_q3 = mashup.getActivitiesByCulturalHeritageObject("20", "1900")
+result_q3 = mashup.getActivitiesByCulturalHeritageObject("20", "1545")
 pp(result_q3)
 
 # Test aggiuntivo

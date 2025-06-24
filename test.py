@@ -33,7 +33,7 @@ class TestProjectBasic(unittest.TestCase):
     metadata = "data" + sep + "meta.csv"
     process = "data" + sep + "process.json"
     relational = "relational.db"
-    graph = "http://10.201.5.75:9999/blazegraph/sparql"
+    graph = "http://192.168.178.73:9999/blazegraph/sparql"
     
     def test_01_MetadataUploadHandler(self):
         u = MetadataUploadHandler()
